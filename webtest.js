@@ -77,34 +77,67 @@ function onDlSuccess(entry) {
 	alert("File download complete: " + entry.toURL());
 }
 
-function onDlErr(error) {
-	var eStr = 'File download error: Source: ' + error.source + '\n';
+function onErr(error) {
+	var eStr = 'File transfer error: Source: ' + error.source + '\n';
         eStr += 'Target: ' + error.target + '\n';
-        eStr += 'Code: ' + error.code;
+        eStr += 'HTTP-Status: ' + error.http_status + '\n';
+        eStr += 'Exception: ' + error.exception;
 		alert(eStr);
 }
 
-function onGetDirectory(dirEntry) {
+function onGetDownDir(dirEntry) {
 	dirEntry.getFile(
 		theFileName, 
 		{create: true}, 
 		function(fileEntry) {
-			var theFileUrl = fileEntry.toURL(), fileTransfer = new FileTransfer();
+			var fileTransfer = new FileTransfer();
 		
 			fileTransfer.download(
 				theUrl,
-				theFileUrl,
+				fileEntry.toURL(),
 				onDlSuccess,
-				onDlErr,
+				onErr,
 				true,
 				{}
 			);
 		}, 
 		errorHandler
 	);
-
 }
 
+function onUlSuccess(ulres) {
+	var eStr = 'Upload Success!\n'; 
+		eStr += 'BytesSent: ' + ulres.bytesSent + '\n';
+        eStr += 'ResponseCode: ' + ulres.responseCode + '\n';
+        eStr += 'Response: ' + ulres.response + '\n';
+        eStr += 'Headers: ' + ulres.headers;
+		alert(eStr);
+}
+
+function onGetUpDir(dirEntry) {
+	dirEntry.getFile(
+		theFileName, 
+		{create: false}, 
+		function(fileEntry) {
+			var fileTransfer = new FileTransfer(),
+				options = new FileUploadOptions();
+				
+			options.fileKey = "file";
+			options.fileName = theFileName.substr(theFileName.lastIndexOf('/') + 1);
+			options.mimeType = "text/plain";
+	
+			fileTransfer.upload(
+				fileEntry.toURL(),
+				theUrl,
+				onUlSuccess,
+				onErr,
+				options,
+				true
+			);
+		}, 
+		errorHandler
+	);
+}
 
 function doDownloadClick() {
 	theFileName = document.getElementById('fileName').value.trim();
@@ -128,7 +161,7 @@ function doDownloadClick() {
 			fs.root.getDirectory(
 				'RideCheck', 
 				{create: true}, 
-				onGetDirectory, 
+				onGetDownDir, 
 				errorHandler
 			);
 		}, 
@@ -136,11 +169,41 @@ function doDownloadClick() {
 	);
 }
 
+function doUploadClick() {
+	theFileName = document.getElementById('fileName').value.trim();
+	theUrl = document.getElementById('url').value.trim();
+	  
+	if (theUrl) {
+		theUrl = encodeURI(theUrl);
+	} else {
+		alert('URL can not be blank');
+		return;
+	}
 
+	if (!theFileName) {
+		alert('File Name can not be blank');
+		return;
+	}
+
+	window.requestFileSystem(
+		window.PERSISTENT, 
+		5*1024*1024, 
+		function(fs) {
+			fs.root.getDirectory(
+				'RideCheck', 
+				{create: false}, 
+				onGetUpDir, 
+				errorHandler
+			);
+		}, 
+		errorHandler
+	);
+}
 
 // Call on Android device ready event 
 function init() {
   document.getElementById('downloadFile').onclick = doDownloadClick;
+  document.getElementById('uploadFile').onclick = doUploadClick;
 }
 
 // Wait for device API libraries to load

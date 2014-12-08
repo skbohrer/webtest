@@ -2,9 +2,9 @@
     <widget xmlns   = "http://www.w3.org/ns/widgets"
         xmlns:gap   = "http://phonegap.com/ns/1.0"
 		xmlns:android = "http://schemas.android.com/apk/res/android"
-        id          = "com.steadmanhill.andfiletest"
-        versionCode = "1"
-        version     = "0.1" >
+        id          = "com.steadmanhill.webTest"
+        versionCode = "2"
+        version     = "0.2" >
 
     <!-- versionCode is Android only: increase each build, unrelated to displayed version -->
 
