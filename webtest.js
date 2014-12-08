@@ -1,11 +1,12 @@
 'use strict';
+/*jslint browser: true, devel: true, white: true */
 
 window.requestFileSystem  = window.requestFileSystem || window.webkitRequestFileSystem;
 
 
 // Global vars for the file name and data to write
 // (is there a better way to get arguments into a nested callback func?)
-var theFileName, theFileData;
+var theFileName, theUrl;
 
 // error codes from plugin doc
 /*
@@ -22,8 +23,6 @@ var theFileName, theFileData;
     11 = TYPE_MISMATCH_ERR
     12 = PATH_EXISTS_ERR
 */
-
-
 
 function errorHandler(e) {
   var msg = '';
@@ -74,60 +73,76 @@ function errorHandler(e) {
   alert('Error: ' + msg);
 }
 
+function onDlSuccess(entry) {
+	alert("File download complete: " + entry.toURL());
+}
+
+function onDlErr(error) {
+	var eStr = 'File download error: Source: ' + error.source + '\n';
+        eStr += 'Target: ' + error.target + '\n';
+        eStr += 'Code: ' + error.code;
+		alert(eStr);
+}
 
 function onGetDirectory(dirEntry) {
-
-  dirEntry.getFile(theFileName, {create: true}, function(fileEntry) {
-
-    // Create a FileWriter object for our FileEntry (log.txt).
-    fileEntry.createWriter(function(fileWriter) {
-      var blob;
-
-      fileWriter.onwriteend = function(e) {
-        alert('Success! Write completed.');
-      };
-
-      fileWriter.onerror = function(e) {
-        alert('Write failed: ' + e.toString());
-      };
-
-      // Create a new Blob and write it to log.txt.
-      blob = new Blob([theFileData], {type: 'text/plain'});
-
-      fileWriter.write(blob);
-
-    }, errorHandler);
-
-  }, errorHandler);
+	dirEntry.getFile(
+		theFileName, 
+		{create: true}, 
+		function(fileEntry) {
+			var theFileUrl = fileEntry.toURL(), fileTransfer = new FileTransfer();
+		
+			fileTransfer.download(
+				theUrl,
+				theFileUrl,
+				onDlSuccess,
+				onDlErr,
+				true,
+				{}
+			);
+		}, 
+		errorHandler
+	);
 
 }
 
 
-function doFileClick() {
-  theFileName = document.getElementById('fileName').value.trim();
+function doDownloadClick() {
+	theFileName = document.getElementById('fileName').value.trim();
+	theUrl = document.getElementById('url').value.trim();
+	  
+	if (theUrl) {
+		theUrl = encodeURI(theUrl);
+	} else {
+		alert('URL can not be blank');
+	}
 
-  if (!theFileName) {
-    alert('File Name can not be blank');
-    return;
-  }
+	if (!theFileName) {
+		alert('File Name can not be blank');
+		return;
+	}
 
-  theFileData = document.getElementById('srcText').innerHTML;
-
-  window.requestFileSystem(window.PERSISTENT, 5*1024*1024, function(fs) {
-    fs.root.getDirectory('AndFileTest', {create: true}, onGetDirectory, errorHandler);
-  }, errorHandler);
+	window.requestFileSystem(
+		window.PERSISTENT, 
+		5*1024*1024, 
+		function(fs) {
+			fs.root.getDirectory(
+				'RideCheck', 
+				{create: true}, 
+				onGetDirectory, 
+				errorHandler
+			);
+		}, 
+		errorHandler
+	);
 }
 
 
 
-// Call on Android device ready event and also directly for PC testing. Thus
-// init may be called twice
+// Call on Android device ready event 
 function init() {
-  document.getElementById('writeFile').onclick = doFileClick;
+  document.getElementById('downloadFile').onclick = doDownloadClick;
 }
 
 // Wait for device API libraries to load
 document.addEventListener("deviceready", init, false);
-
-init();
 
