@@ -98,7 +98,9 @@ function onGetDownDir(dirEntry) {
 				onDlSuccess,
 				onErr,
 				true,
-				{}
+				{
+					headers: {'Authorization' : encodePW()}
+				}
 			);
 		}, 
 		errorHandler
@@ -114,6 +116,14 @@ function onUlSuccess(ulres) {
 		alert(eStr);
 }
 
+function encodePW() {
+	var user, pw;
+	
+	user = document.getElementById('user').value.trim();
+	pw = document.getElementById('pass').value.trim();
+	return 'Basic ' + window.btoa(user + ':' + pw);
+}
+
 function onGetUpDir(dirEntry) {
 	dirEntry.getFile(
 		theFileName, 
@@ -125,6 +135,7 @@ function onGetUpDir(dirEntry) {
 			options.fileKey = "file";
 			options.fileName = theFileName.substr(theFileName.lastIndexOf('/') + 1);
 			options.mimeType = "text/plain";
+			options.headers = {'Authorization' : encodePW()};
 	
 			fileTransfer.upload(
 				fileEntry.toURL(),
