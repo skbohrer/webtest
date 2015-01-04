@@ -241,10 +241,15 @@ function doGetDirClick() {
 		}
 	};
 	
-	xhr.error = function(e) {
+	xhr.onerror = function(e) {
 		alert('Get Dir Error: ' + this.statusText);
+		xhr.abort();
 	};
 	
+	xhr.ontimeout = function(e) {
+		alert('Get Dir Timeout: ' + this.statusText);
+		xhr.abort();
+	};
 	xhr.send();
 }
 
