@@ -73,6 +73,15 @@ function errorHandler(e) {
   alert('Error: ' + msg);
 }
 
+
+function encodePW() {
+	var user, pw;
+	
+	user = document.getElementById('user').value.trim();
+	pw = document.getElementById('pass').value.trim();
+	return 'Basic ' + window.btoa(user + ':' + pw);
+}
+
 function onDlSuccess(entry) {
 	alert("File download complete: " + entry.toURL());
 }
@@ -116,13 +125,6 @@ function onUlSuccess(ulres) {
 		alert(eStr);
 }
 
-function encodePW() {
-	var user, pw;
-	
-	user = document.getElementById('user').value.trim();
-	pw = document.getElementById('pass').value.trim();
-	return 'Basic ' + window.btoa(user + ':' + pw);
-}
 
 function onGetUpDir(dirEntry) {
 	dirEntry.getFile(
@@ -211,10 +213,46 @@ function doUploadClick() {
 	);
 }
 
+function doGetDirClick() {
+	var xhr =  new XMLHttpRequest();
+	
+	theUrl = document.getElementById('url').value.trim();
+	  
+	if (theUrl) {
+		if (theUrl.slice(-1) !== '/') {
+			theUrl += '/';
+		}
+		theUrl = encodeURI(theUrl + '~files.lst');
+	} else {
+		alert('URL can not be blank');
+		return;
+	}
+
+	xhr.open('GET', theUrl, true);
+	xhr.responseType = 'text';
+	xhr.setRequestHeader('Authorization', encodePW());
+	
+	xhr.onload = function(e) {
+		if (this.status === 200) {
+			alert('Got Dir:\n' + this.response);
+		} else {
+			alert('GetDir OnLoad Bad result: ' + this.statusText);
+		}
+	};
+	
+	xhr.error = function(e) {
+		alert('Get Dir Error: ' + this.statusText);
+	};
+	
+	xhr.send();
+}
+
+
 // Call on Android device ready event 
 function init() {
   document.getElementById('downloadFile').onclick = doDownloadClick;
   document.getElementById('uploadFile').onclick = doUploadClick;
+  document.getElementById('getDir').onclick = doGetDirClick;
 }
 
 // Wait for device API libraries to load
