@@ -214,7 +214,8 @@ function doUploadClick() {
 }
 
 function doGetDirClick() {
-	var xhr =  new XMLHttpRequest();
+	var xhr =  new XMLHttpRequest(),
+		theTimeout = null;
 	
 	theUrl = document.getElementById('url').value.trim();
 	  
@@ -231,9 +232,9 @@ function doGetDirClick() {
 	xhr.open('GET', theUrl, true);
 	xhr.responseType = 'text';
 	xhr.setRequestHeader('Authorization', encodePW());
-	xhr.timeout = 7000;
 	
 	xhr.onload = function(e) {
+		clearTimeout(theTimeout);
 		if (this.status === 200) {
 			alert('Got Dir:\n' + this.response);
 		} else {
@@ -242,14 +243,11 @@ function doGetDirClick() {
 	};
 	
 	xhr.onerror = function(e) {
-		alert('Get Dir Error: ' + this.statusText);
-		xhr.abort();
+		clearTimeout(theTimeout);
+		alert('Get Dir Error: ');
 	};
 	
-	xhr.ontimeout = function(e) {
-		alert('Get Dir Timeout: ' + this.statusText);
-		xhr.abort();
-	};
+	theTimeout = setTimeout(function (){xhr.abort(); alert('GetDir Timed Out!');}, 4000);
 	xhr.send();
 }
 
