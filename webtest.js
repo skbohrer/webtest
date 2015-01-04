@@ -231,6 +231,7 @@ function doGetDirClick() {
 	xhr.open('GET', theUrl, true);
 	xhr.responseType = 'text';
 	xhr.setRequestHeader('Authorization', encodePW());
+	xhr.timeout = 7000;
 	
 	xhr.onload = function(e) {
 		if (this.status === 200) {
