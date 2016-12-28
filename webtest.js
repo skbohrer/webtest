@@ -238,7 +238,7 @@ function doGetDirClick() {
 		if (this.status === 200) {
 			alert('Got Dir:\n' + this.response);
 		} else {
-			alert('GetDir OnLoad Bad result: ' + this.statusText);
+			alert('GetDir OnLoad Bad result: ' + this.status + " -> " + this.statusText);
 		}
 	};
 	
