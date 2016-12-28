@@ -228,6 +228,7 @@ function doGetDirClick() {
 		alert('URL can not be blank');
 		return;
 	}
+	logIt(theUrl);
 
 	xhr.open('GET', theUrl, true);
 	xhr.responseType = 'text';
@@ -258,6 +259,11 @@ function init() {
   document.getElementById('uploadFile').onclick = doUploadClick;
   document.getElementById('getDir').onclick = doGetDirClick;
 }
+
+function logIt(lstr) {
+	document.getElementById('logText').value += " | " + lstr;
+}
+
 
 // Wait for device API libraries to load
 document.addEventListener("deviceready", init, false);
