@@ -133,9 +133,9 @@ function onGetUpDir(dirEntry) {
 		function(fileEntry) {
 			var fileTransfer = new FileTransfer(),
 				options = new FileUploadOptions();
-				
+			logit("getFileHandler");
 			options.fileKey = "file";
-			options.fileName = theFileName.substr(theFileName.lastIndexOf('/') + 1);
+			options.fileName = theFileName;
 			options.mimeType = "text/plain";
 			options.headers = {'Authorization' : encodePW()};
 	
@@ -198,6 +198,10 @@ function doUploadClick() {
 		return;
 	}
 
+	clearLog();
+	logIt(theUrl);
+	logit("upload file:" + theFileName);
+
 	window.requestFileSystem(
 		window.PERSISTENT, 
 		5*1024*1024, 
@@ -216,6 +220,7 @@ function doUploadClick() {
 function doGetDirClick() {
 	var xhr =  new XMLHttpRequest(),
 		theTimeout = null;
+	clearLog();
 	
 	theUrl = document.getElementById('url').value.trim();
 	  
@@ -260,8 +265,16 @@ function init() {
   document.getElementById('getDir').onclick = doGetDirClick;
 }
 
-function logIt(lstr) {
-	document.getElementById('logText').value += " | " + lstr;
+var logStr = "";
+
+function clearLog() {
+	logStr = "";
+	document.getElementById('logText').value = logStr;
+}
+
+function logIt(theStr) {
+	logStr += " |" + theStr;
+	document.getElementById('logText').value = logStr;
 }
 
 
