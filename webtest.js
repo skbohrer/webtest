@@ -95,12 +95,17 @@ function onErr(error) {
 }
 
 function onGetDownDir(dirEntry) {
+
+	logit ("getDownDir");
+
 	dirEntry.getFile(
 		theFileName, 
 		{create: true}, 
 		function(fileEntry) {
 			var fileTransfer = new FileTransfer();
 		
+			logit("got file:" + fileEntry.toURL());
+
 			fileTransfer.download(
 				theUrl,
 				fileEntry.toURL(),
@@ -158,16 +163,22 @@ function doDownloadClick() {
 	theFileName = document.getElementById('fileName').value.trim();
 	theUrl = document.getElementById('url').value.trim();
 	  
-	if (theUrl) {
-		theUrl = encodeURI(theUrl);
-	} else {
-		alert('URL can not be blank');
-	}
-
 	if (!theFileName) {
 		alert('File Name can not be blank');
 		return;
 	}
+
+	if (theUrl) {
+		theUrl = encodeURI(theUrl + theFileName);
+	} else {
+		alert('URL can not be blank');
+		return;
+	}
+
+	clearLog();
+	logit("Download Click");
+	logit(theUrl);
+	logit("target file:" + theFileName);
 
 	window.requestFileSystem(
 		window.PERSISTENT, 
