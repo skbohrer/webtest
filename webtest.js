@@ -136,6 +136,8 @@ function onGetUpDir(dirEntry) {
 			logit("getFileHandler");
 			options.fileKey = "file";
 			options.fileName = theFileName;
+			options.httpMethod = "POST";
+			options.chunkedMode = false;
 			options.mimeType = "text/plain";
 			options.headers = {'Authorization' : encodePW()};
 	
