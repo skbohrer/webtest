@@ -199,7 +199,8 @@ function doUploadClick() {
 	}
 
 	clearLog();
-	logIt(theUrl);
+	logit("Upload Click");
+	logit(theUrl);
 	logit("upload file:" + theFileName);
 
 	window.requestFileSystem(
@@ -233,7 +234,7 @@ function doGetDirClick() {
 		alert('URL can not be blank');
 		return;
 	}
-	logIt(theUrl);
+	logit(theUrl);
 
 	xhr.open('GET', theUrl, true);
 	xhr.responseType = 'text';
@@ -272,7 +273,7 @@ function clearLog() {
 	document.getElementById('logText').value = logStr;
 }
 
-function logIt(theStr) {
+function logit(theStr) {
 	logStr += " |" + theStr;
 	document.getElementById('logText').value = logStr;
 }
