@@ -180,11 +180,21 @@ function doDownloadClick() {
 	logit(theUrl);
 	logit("target file:" + theFileName);
 
-	window.requestFileSystem(
+
+	/*	THIS VERSION FOR NEW LIBRARY  */
+		window.resolveLocalFileSystemURL(
+			cordova.file.externalRootDirectory,			
+			function(de) {	// after dir entry is returned, get our directory 
+				de.getDirectory(
+	
+
+	/* Old version */
+	/* window.requestFileSystem(
 		window.PERSISTENT, 
 		5*1024*1024, 
 		function(fs) {
 			fs.root.getDirectory(
+	*/
 				'RideCheck', 
 				{create: true}, 
 				onGetDownDir, 
@@ -216,11 +226,20 @@ function doUploadClick() {
 	logit(theUrl);
 	logit("upload file:" + theFileName);
 
-	window.requestFileSystem(
+	/*	THIS VERSION FOR NEW LIBRARY  */
+	window.resolveLocalFileSystemURL(
+		cordova.file.externalRootDirectory,			
+		function(de) {	// after dir entry is returned, get our directory 
+			de.getDirectory(
+	
+
+	/* old version */
+	/*window.requestFileSystem(
 		window.PERSISTENT, 
 		5*1024*1024, 
 		function(fs) {
-			fs.root.getDirectory(
+			fs.root.getDirectory( 
+	*/
 				'RideCheck', 
 				{create: false}, 
 				onGetUpDir, 
